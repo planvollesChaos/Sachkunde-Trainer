@@ -1,7 +1,7 @@
 // Offline-Speicher: Programm sofort, Bilder beim ersten Ansehen
 // Bei jeder Änderung an den Dateien V erhöhen (und APPV in app.js bei Änderung an spiel-*.js / qr.js)
-var V='sachkunde-2026-10-26-1';
-var CORE=['./','index.html','app.js','daten.js','seiten.js','manifest.webmanifest','icon-192.png','bilder/kaninchen-winkt.webp','bilder/ergebnis-5.webp','bilder/profil-ellena.webp','bilder/profil-merle.webp','bilder/profil-eltern.webp'];
+var V='sachkunde-2026-10-26-2';
+var CORE=['./','index.html','app.js','daten.js','lesebuch.js','seiten.js','manifest.webmanifest','icon-192.png','bilder/kaninchen-winkt.webp','bilder/ergebnis-5.webp','bilder/profil-ellena.webp','bilder/profil-merle.webp','bilder/profil-eltern.webp'];
 self.addEventListener('install',function(e){e.waitUntil(caches.open(V).then(function(c){return Promise.all(CORE.map(function(u){return c.add(u).catch(function(){})}))}).then(function(){return self.skipWaiting()}))});
 self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k!==V}).map(function(k){return caches.delete(k)}))}).then(function(){return self.clients.claim()}))});
 self.addEventListener('fetch',function(e){

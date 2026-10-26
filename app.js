@@ -534,10 +534,50 @@ function renderHome(noPull){
 
     homeTiles(false));
 }
+/* ---------- Lesebuch ---------- */
+function readSet(){try{return JSON.parse(ls('sk:read:'+(kid?kid.id:''))||'{}')}catch(e){return {}}}
+function markRead(id){var r=readSet();if(!r[id]){r[id]=1;lset('sk:read:'+(kid?kid.id:''),JSON.stringify(r));}}
+function renderLeseUebersicht(){
+  var r=readSet(),hh='<p>Hier steht der Stoff in kurzen, gut lesbaren Kapiteln. Lies ein Kapitel, danach übst du mit den Karten.</p>';
+  [['verkehr','Verkehr 🚲','v'],['wald','Wald 🌲','w']].forEach(function(th){
+    var list=LESEBUCH.filter(function(c){return c.t===th[0]});
+    var done=list.filter(function(c){return r[c.id]}).length;
+    hh+='<h2 style="margin:22px 0 4px">'+th[1]+'</h2><div class="small">'+done+' von '+list.length+' Kapiteln gelesen</div><div class="grid" style="margin-top:8px">';
+    list.forEach(function(c){hh+='<button class="tile '+th[2]+'" data-go="kap" data-id="'+c.id+'"><b>'+c.e+' '+esc(c.titel)+(r[c.id]?' ✅':'')+'</b><span>'+esc(c.kurz)+'</span></button>'});
+    hh+='</div>';
+  });
+  mount(h('div',{html:hh}));
+}
+function renderKapitel(id){
+  var i=0;for(;i<LESEBUCH.length;i++)if(LESEBUCH[i].id===id)break;
+  var c=LESEBUCH[i];if(!c)return;
+  var hh='<div class="kap '+(c.t==='wald'?'w':'v')+'"><div class="kaphead"><span class="kape">'+c.e+'</span><div><h2>'+esc(c.titel)+'</h2><div class="small">'+esc(c.kurz)+'</div></div></div>';
+  c.teile.forEach(function(t){
+    hh+='<section class="teil"><h3>'+t.h+'</h3>';
+    if(t.p)hh+='<p>'+t.p+'</p>';
+    if(t.steps){hh+='<ol class="steps">';t.steps.forEach(function(s){hh+='<li>'+s+'</li>'});hh+='</ol>'}
+    if(t.l){hh+='<ul class="blist">';t.l.forEach(function(s){hh+='<li>'+s+'</li>'});hh+='</ul>'}
+    if(t.tab){hh+='<div class="tabwrap"><table class="lt">';
+      var hd=t.tab.k;if(hd.join('')){hh+='<tr>'+hd.map(function(k){return '<th>'+k+'</th>'}).join('')+'</tr>'}
+      t.tab.z.forEach(function(z){hh+='<tr>'+z.map(function(x,n){return (n===0?'<th>':'<td>')+x+(n===0?'</th>':'</td>')}).join('')+'</tr>'});
+      hh+='</table></div>'}
+    if(t.m)hh+='<div class="merke">⭐ <b>Merke:</b> '+t.m+'</div>';
+    if(t.tipp)hh+='<div class="tippbox">💡 '+t.tipp+'</div>';
+    hh+='</section>';
+  });
+  hh+='<div class="small" style="margin-top:14px">Original im Buch:</div>'+nachschlagen(c.s);
+  var prev=LESEBUCH[i-1],next=LESEBUCH[i+1];
+  hh+='<div class="row noprint" style="margin-top:18px">'+(prev?'<button data-go="kap" data-id="'+prev.id+'" data-rep="1">← '+esc(prev.titel)+'</button>':'')+(next?'<button class="btn-main" data-go="kap" data-id="'+next.id+'" data-rep="1">Weiter: '+esc(next.titel)+' →</button>':'')+'</div>';
+  hh+='<div class="row noprint"><button data-go="kstart" data-t="'+c.t+'" data-m="neu">🃏 Jetzt dazu üben</button></div></div>';
+  markRead(c.id);
+  mount(h('div',{html:hh}));
+}
+
 function homeTiles(parent){
   return h('div',null,
     h('p',null,'Klassenarbeit Sachkunde am ',h('b',null,'10.11.'),' – Thema ',h('b',null,'Verkehrserziehung (Fahrrad)'),' und ',h('b',null,'Lebensraum Wald'),'. Such dir etwas aus:'),
     h('div',{class:'grid',html:
+  '<button class="tile w" data-go="lese"><b>📖 Lesebuch</b><span>Der Stoff in kurzen Kapiteln zum Lesen.</span></button>'+
   '<button class="tile w" data-go="karten"><b>🃏 Lernkarten</b><span>Frage lesen, überlegen, umdrehen.</span></button>'+
   '<button class="tile v" data-go="quiz"><b>❓ Quiz</b><span>Üben mit Fragen. Mit Erklärung.</span></button>'+
   '<button class="tile g" data-go="probe"><b>📝 Probe-Arbeit</b><span>20 gemischte Fragen wie in der Arbeit.</span></button>'+
@@ -548,7 +588,9 @@ function homeTiles(parent){
 app.addEventListener('click',function(e){
   var b=e.target.closest('[data-go]');if(!b)return;
   var g=b.getAttribute('data-go'),t=b.getAttribute('data-t');
-  if(g==='karten')go(function(){renderKartenWahl()},'Lernkarten');
+  if(g==='lese')go(renderLeseUebersicht,'Lesebuch');
+  else if(g==='kap'){var kid2=b.getAttribute('data-id');go(function(){renderKapitel(kid2)},'Lesebuch',!!b.getAttribute('data-rep'));}
+  else if(g==='karten')go(function(){renderKartenWahl()},'Lernkarten');
   else if(g==='quiz')go(function(){renderQuizWahl()},'Quiz');
   else if(g==='probe')go(function(){startQuiz('alle',20,true)},'Probe-Arbeit');
   else if(g==='zettel')go(renderZettel,'Lernzettel');

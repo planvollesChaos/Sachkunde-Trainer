@@ -81,6 +81,28 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--edge);
 .stars{font-size:34px;letter-spacing:4px}
 table.t{border-collapse:collapse;width:100%}
 table.t td,table.t th{border:1px solid var(--edge);padding:6px 8px;text-align:left;vertical-align:top}
+
+.kap{font-size:19px;line-height:1.65}
+.kaphead{display:flex;gap:14px;align-items:center;border-radius:20px;padding:14px 16px;margin-bottom:14px;background:var(--wald-bg);border:2px solid var(--wald)}
+.kap.v .kaphead{background:var(--verkehr-bg);border-color:var(--verkehr)}
+.kaphead h2{margin:0;font-size:24px;line-height:1.2}
+.kape{font-size:46px}
+.teil{margin:16px 0;padding:14px 16px;border-radius:18px;border:2px solid var(--edge);background:var(--paper-deep)}
+.teil h3{margin:0 0 8px;font-size:21px;color:var(--wald-deep)}
+.kap.v .teil h3{color:var(--verkehr-deep)}
+.teil p{margin:6px 0}
+.teil b{background:linear-gradient(transparent 55%,var(--gold-bg) 55%)}
+.steps{list-style:none;counter-reset:s;margin:8px 0;padding:0}
+.steps li{counter-increment:s;position:relative;margin:8px 0;padding:8px 10px 8px 52px;background:var(--paper);border-radius:14px;border:1px solid var(--edge)}
+.steps li:before{content:counter(s);position:absolute;left:10px;top:8px;width:32px;height:32px;border-radius:50%;background:var(--wald);color:#fff;font-weight:700;text-align:center;line-height:32px}
+.kap.v .steps li:before{background:var(--verkehr)}
+.blist{margin:8px 0;padding-left:24px}.blist li{margin:6px 0}
+.tabwrap{overflow-x:auto;margin:8px 0}
+.lt{border-collapse:collapse;width:100%;font-size:17px;background:var(--paper)}
+.lt th,.lt td{border:1px solid var(--edge);padding:8px 10px;text-align:left;vertical-align:top}
+.lt th{background:var(--paper-deep);white-space:normal}
+.merke{background:var(--gold-bg);border-radius:14px;padding:10px 14px;margin:10px 0;border-left:6px solid var(--gold)}
+.tippbox{background:var(--ok-bg);border-radius:14px;padding:10px 14px;margin:10px 0;border-left:6px solid var(--ok)}
 @media print{header,.noprint,#lb{display:none!important}body{font-size:12pt}main{max-width:none}}
 .ptile{display:flex;align-items:center;gap:14px;width:100%;border:0;border-radius:20px;padding:12px 14px;color:#fff;font:inherit;text-align:left;cursor:pointer;margin:10px 0;touch-action:manipulation;min-height:0}
 .avatar{width:56px;height:56px;object-fit:contain;flex:none}
@@ -142,6 +164,7 @@ table.t{font-size:15px}
 
 <script src="seiten.js"></script>
 <script src="daten.js"></script>
+<script src="lesebuch.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

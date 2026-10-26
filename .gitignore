@@ -1,0 +1,5 @@
+original/
+build/
+node_modules/
+*.bat
+server.js

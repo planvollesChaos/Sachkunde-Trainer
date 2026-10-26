@@ -375,7 +375,7 @@ function selectKid(){
   setTitle('');backBtn.style.display='none';updHeader();
   mount(h('h2',{style:'margin-top:0'},'Wer übt heute?'),h('p',{class:'soft'},'Tippe auf dein Häschen. Klassenarbeit Sachkunde am 10.11.: Verkehr und Wald.'),
     KIDS.map(ptile),
-    podia(),
+
     fam()?null:h('p',{class:'center'},h('button',{class:'btn small',onclick:connectScreen},'🔗 Mit Familie verbinden')));
 }
 
@@ -384,7 +384,7 @@ function cfg(){
   var par=KIDS.filter(function(k){return k.role==='parent';})[0],p=par?((kid&&kid.id===par.id&&P)?P:profileData(par)):null,c=(p&&p.cfg)||{};
   return {ev:c.ev===2?2:1,n:c.n>=1&&c.n<=5?c.n:3};
 }
-function gamesOn(){return ls('sk:games')!=='0';}
+function gamesOn(){return false;}
 function loadScript(src,ok,fail){
   window.__ls=window.__ls||{};
   if(window.__ls[src]){ok();return;}
@@ -531,7 +531,7 @@ function renderHome(noPull){
     h('h2',{style:'margin:4px 0'},'Hallo '+kid.name+'!'),
     weekKidCard(),
     h('div',{class:'card'},h('b',null,'🃏 Deine Karten-Sammlung'),barEl(pc,'big'),h('p',{class:'soft',style:'margin:4px 0 0'},phrase(pc))),
-    recordCard(),
+
     homeTiles(false));
 }
 function homeTiles(parent){
@@ -590,7 +590,7 @@ function weekCard(k){
     h('div',{class:'row',style:'align-items:center;margin:0 0 6px;flex-wrap:nowrap'},avatar(k),h('h2',{style:'margin:0;flex:1'},k.name),h('b',null,pctKnown(s)+' % gekonnt')),
     barEl(pctKnown(s),'big'),
     h('p',{class:'soft',style:'margin:4px 0 8px'},'⭐ '+s.k+' von '+s.n+' Karten gekonnt · Verkehr 🚲 '+s.t.verkehr.k+'/'+s.t.verkehr.n+' · Wald 🌲 '+s.t.wald.k+'/'+s.t.wald.n),
-    h('p',{class:'soft',style:'margin:0 0 6px'},'🎮 Jump-and-Run: '+(gameVal(p,'run')?gameVal(p,'run')+' m':'–')+' · 🧱 Blöcke: '+(gameVal(p,'block')||'–')+' · 🧩 Sudoku klein: '+(gameVal(p,'sd6')?fmtT(gameVal(p,'sd6')):'–')+' · groß: '+(gameVal(p,'sd9')?fmtT(gameVal(p,'sd9')):'–')),
+
     h('p',{style:'margin:14px 0 4px'},h('b',null,'🗓 Lernzeit: '+mins+' min'),', '+st.active+' von 7 Tagen'),
     barsEl(st),
     h('p',{class:'soft',style:'margin:0 0 6px'},'Ziel: '+GOAL_DAYS+' Tage mit je etwa 20 Minuten. Jeder Tag zählt höchstens einmal, ein langer Tag ersetzt keinen anderen. Spielzeit zählt nicht als Lernzeit.'),
@@ -621,8 +621,8 @@ function renderParentHome(noPull){
     weekBlock(),
     h('h2',null,'🌲 Selbst üben und testen'),
     h('p',{class:'soft',style:'margin-top:0'},'Euer eigener Übungsbereich. Euer Fortschritt zählt hier nicht in die Wochenübersicht der Kinder.'),
-    h('div',{class:'card'},h('b',null,'🎮 Spiele zum Ausprobieren'),h('p',{class:'soft',style:'margin:4px 0 10px'},'Hier könnt ihr die Spiele jederzeit spielen, auch ohne Belohnung. Bei den Kindern gibt es sie als Belohnung nach dem Üben.'),
-      h('div',{class:'row',style:'align-items:center'},h('label',{class:'soft',style:'flex:none'},'Start: '),startSel,GAMES.map(function(gm){return h('button',{class:'btn primary',style:'flex:none',onclick:function(){gm.play(function(){home(true);},{startT:+startSel.value,back:function(){home(true);}});}},gm.emoji+' '+gm.name);}))),
+
+
     homeTiles(true));
 }
 
@@ -648,7 +648,7 @@ function resetCard(){
 function pinCard(){
   var a=h('input',{class:'plain',type:'password',inputmode:'numeric',maxlength:'4',placeholder:'Neuer Code (4 Ziffern)',autocomplete:'off'}),msg=h('div',{class:'msg'});
   return h('div',{class:'card'},h('h2',{style:'margin-top:0'},'🔒 Eltern-Code'),
-    h('p',{class:'soft'},'Der Code schützt das Eltern-Profil (und damit die Spiele dort). Standard ist 4444 (oder der Code der Vokabel-App auf diesem Gerät), bitte ändere ihn. Nach drei falschen Eingaben ist der Code kurz gesperrt. Er gilt nur für dieses Gerät.'),
+    h('p',{class:'soft'},'Der Code schützt das Eltern-Profil. Standard ist 4444 (oder der Code der Vokabel-App auf diesem Gerät), bitte ändere ihn. Nach drei falschen Eingaben ist der Code kurz gesperrt. Er gilt nur für dieses Gerät.'),
     h('div',{class:'row'},a,h('button',{class:'btn primary',onclick:function(){
       if(!/^\d{4}$/.test(a.value)){msg.textContent='Bitte genau 4 Ziffern.';msg.className='msg bad';return;}
       lset('sk:pin',a.value);
@@ -663,10 +663,10 @@ function settings(noPull){
   function saveCfg(){P.cfg={ev:+evSel.value,n:+nSel.value,t:Date.now()};saveP();}
   evSel.addEventListener('change',saveCfg);nSel.addEventListener('change',saveCfg);
   var gmBox=h('input',{type:'checkbox',style:'width:24px;height:24px'});gmBox.checked=gamesOn();gmBox.addEventListener('change',function(){lset('sk:games',gmBox.checked?'1':'0');});
-  mount(familyCard(),pinCard(),resetCard(),
-    h('div',{class:'card'},h('h2',{style:'margin-top:0'},'🎮 Spiele'),h('label',{class:'row',style:'align-items:center'},gmBox,h('span',{style:'flex:1 1 auto'},'Spiele als Belohnung anbieten (nur dieses Gerät)')),
-      h('div',{class:'row',style:'align-items:center'},h('span',{style:'flex:none'},'Spielen darf man'),evSel,h('span',{style:'flex:none'},'–'),nSel,h('span',{style:'flex:none'},'(Jump-and-Run: je 3 Leben)')),
-      h('p',{class:'soft'},'Ein Durchlauf ist ein Lernkarten-Stapel (ab 8 Karten), ein Quiz oder eine Probe-Arbeit. Danach (oder nach jedem zweiten, je nach Einstellung) darf das Kind mehrere Spiele wählen: Jump-and-Run, Hoppel-Blöcke oder Sudoku. Die Einstellung gilt für alle Geräte der Familie, sobald sie abgeglichen sind. Die Spielzeit zählt nicht als Lernzeit. Die Rekorde stehen auf der Profilwahl und sind je Kind getrennt von der Vokabel-App.')));
+  mount(familyCard(),pinCard());
+
+
+
 }
 
 /* ---------- Themenwahl ---------- */
